@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:todo_c6_sun/dialoges_utils.dart';
+import 'package:todo_c6_sun/my_database/my_database.dart';
+import 'package:todo_c6_sun/my_database/task.dart';
 import 'package:todo_c6_sun/my_theme.dart';
 
 class TaskWidget extends StatelessWidget {
 
+  Task task;
+  TaskWidget(this.task);
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -16,7 +21,20 @@ class TaskWidget extends StatelessWidget {
             extentRatio: .3,
             motion: DrawerMotion(),
             children: [
-              SlidableAction(onPressed: (buildContext){},
+              SlidableAction(onPressed: (buildContext){
+                MyDataBase.deleteTask(task)
+                    .then((value){
+                  showMessage(context,'task deleted successfully',posActionName: 'ok');
+                }).onError((error, stackTrace){
+                  showMessage(context, 'error deleteing task,'
+                      'try again later',posActionName: 'ok');
+                })
+                    .timeout(Duration(seconds: 5),
+                onTimeout: (){
+                  showMessage(context, 'task removed locally',posActionName: 'ok');
+
+                });
+              },
                 backgroundColor: MyTheme.red,
                 foregroundColor: Colors.white,
                 icon: Icons.delete,
@@ -49,13 +67,12 @@ class TaskWidget extends StatelessWidget {
                 Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('this is title',
+                    Text(task.title??"",
                     style: Theme.of(context).textTheme.titleMedium,),
                     SizedBox(height: 8,),
                     Row(
                       children: [
-                        Icon(Icons.access_time),
-                        Text('10.0Am',
+                        Text(task.desc??"",
                         style: Theme.of(context).textTheme.bodySmall,)
                       ],
                     )

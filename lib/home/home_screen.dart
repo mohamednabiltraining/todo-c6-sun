@@ -54,6 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void showAddBottomSheet(){
     showModalBottomSheet(context: context, builder: (buildcontext){
       return AddTaskBottomSheet();
-    });
+    },isScrollControlled: true);
   }
 }
